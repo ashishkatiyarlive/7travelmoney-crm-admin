@@ -1,6 +1,13 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({
+  settings: {
+    postgresql: {
+      table: 'order',
+    },
+    strict: true,
+  },
+})
 export class Order extends Entity {
   @property({
     type: 'number',
