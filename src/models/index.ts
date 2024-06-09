@@ -1,2 +1,3 @@
+export * from './currency.model';
 export * from './user.model';
-export * from './job.model';
+export * from './order.model';

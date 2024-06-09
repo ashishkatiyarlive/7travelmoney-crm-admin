@@ -1,7 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class User extends Entity {
+export class Currency extends Entity {
   @property({
     type: 'number',
     id: true,
@@ -11,33 +11,21 @@ export class User extends Entity {
 
   @property({
     type: 'string',
+    required: true,
+  })
+  name: string;
+
+  @property({
+    type: 'string',
     default: null,
   })
-  name?: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  email: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  password: string;
+  symbol?: string;
 
   @property({
     type: 'number',
-    default: null,
-  })
-  phone?: number;
-
-  @property({
-    type: 'boolean',
     required: true,
   })
-  status: boolean;
+  rate: number;
 
   @property({
     type: 'date',
@@ -52,19 +40,19 @@ export class User extends Entity {
   updated_at?: string;
 
   @property({
-    type: 'string',
-    default: null,
+    type: 'boolean',
+    required: true,
   })
-  permissions?: string;
+  status: boolean;
 
 
-  constructor(data?: Partial<User>) {
+  constructor(data?: Partial<Currency>) {
     super(data);
   }
 }
 
-export interface UserRelations {
+export interface CurrencyRelations {
   // describe navigational properties here
 }
 
-export type UserWithRelations = User & UserRelations;
+export type CurrencyWithRelations = Currency & CurrencyRelations;
