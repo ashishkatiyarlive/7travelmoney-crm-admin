@@ -52,6 +52,13 @@ export class Currency extends Entity {
   })
   status: boolean;
 
+  @property({
+    type: 'number',
+    required: true,
+    defualt: 0,
+  })
+  priority: number;
+
 
   constructor(data?: Partial<Currency>) {
     super(data);

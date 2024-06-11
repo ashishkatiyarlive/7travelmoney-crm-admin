@@ -7,15 +7,14 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
-  response,
+  response
 } from '@loopback/rest';
 import {Order} from '../models';
 import {OrderRepository} from '../repositories';
@@ -23,8 +22,8 @@ import {OrderRepository} from '../repositories';
 export class OrderController {
   constructor(
     @repository(OrderRepository)
-    public orderRepository : OrderRepository,
-  ) {}
+    public orderRepository: OrderRepository,
+  ) { }
 
   @post('/orders')
   @response(200, {
@@ -76,25 +75,6 @@ export class OrderController {
     return this.orderRepository.find(filter);
   }
 
-  @patch('/orders')
-  @response(200, {
-    description: 'Order PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Order, {partial: true}),
-        },
-      },
-    })
-    order: Order,
-    @param.where(Order) where?: Where<Order>,
-  ): Promise<Count> {
-    return this.orderRepository.updateAll(order, where);
-  }
-
   @get('/orders/{id}')
   @response(200, {
     description: 'Order model instance',
@@ -140,11 +120,4 @@ export class OrderController {
     await this.orderRepository.replaceById(id, order);
   }
 
-  @del('/orders/{id}')
-  @response(204, {
-    description: 'Order DELETE success',
-  })
-  async deleteById(@param.path.number('id') id: number): Promise<void> {
-    await this.orderRepository.deleteById(id);
-  }
 }

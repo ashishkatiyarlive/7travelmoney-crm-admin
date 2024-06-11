@@ -1,21 +1,17 @@
 import {
-  Count,
-  CountSchema,
   Filter,
   FilterExcludingWhere,
-  repository,
-  Where,
+  repository
 } from '@loopback/repository';
 import {
-  post,
-  param,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
-  response,
+  response
 } from '@loopback/rest';
 import {Currency} from '../models';
 import {CurrencyRepository} from '../repositories';
@@ -23,8 +19,8 @@ import {CurrencyRepository} from '../repositories';
 export class CurrencyController {
   constructor(
     @repository(CurrencyRepository)
-    public currencyRepository : CurrencyRepository,
-  ) {}
+    public currencyRepository: CurrencyRepository,
+  ) { }
 
   @post('/currencies')
   @response(200, {
@@ -47,17 +43,6 @@ export class CurrencyController {
     return this.currencyRepository.create(currency);
   }
 
-  @get('/currencies/count')
-  @response(200, {
-    description: 'Currency model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Currency) where?: Where<Currency>,
-  ): Promise<Count> {
-    return this.currencyRepository.count(where);
-  }
-
   @get('/currencies')
   @response(200, {
     description: 'Array of Currency model instances',
@@ -74,25 +59,6 @@ export class CurrencyController {
     @param.filter(Currency) filter?: Filter<Currency>,
   ): Promise<Currency[]> {
     return this.currencyRepository.find(filter);
-  }
-
-  @patch('/currencies')
-  @response(200, {
-    description: 'Currency PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Currency, {partial: true}),
-        },
-      },
-    })
-    currency: Currency,
-    @param.where(Currency) where?: Where<Currency>,
-  ): Promise<Count> {
-    return this.currencyRepository.updateAll(currency, where);
   }
 
   @get('/currencies/{id}')
@@ -140,11 +106,4 @@ export class CurrencyController {
     await this.currencyRepository.replaceById(id, currency);
   }
 
-  @del('/currencies/{id}')
-  @response(204, {
-    description: 'Currency DELETE success',
-  })
-  async deleteById(@param.path.number('id') id: number): Promise<void> {
-    await this.currencyRepository.deleteById(id);
-  }
 }

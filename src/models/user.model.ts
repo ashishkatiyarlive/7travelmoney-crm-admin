@@ -58,12 +58,13 @@ export class User extends Entity {
   })
   updated_at?: string;
 
-  @property({
-    type: 'string',
-    default: null,
-  })
-  permissions?: string;
-
+  // @property({
+  //   type: 'string',
+  //   default: null,
+  // })
+  // permissions?: string[];
+  @property.array(String)
+  permissions: String[];
 
   constructor(data?: Partial<User>) {
     super(data);
