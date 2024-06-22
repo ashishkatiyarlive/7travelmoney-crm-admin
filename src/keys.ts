@@ -10,10 +10,10 @@ export namespace TokenServiceConstants {
 }
 export namespace TokenServiceBindings {
   export const TOKEN_SECRET = BindingKey.create<string>(
-    'authentication.jwt.secret',
+    TokenServiceConstants.TOKEN_SECRET_VALUE,
   );
   export const TOKEN_EXPIRES_IN = BindingKey.create<string>(
-    'authentication.jwt.expiresIn',
+    TokenServiceConstants.TOKEN_EXPIRES_IN_VALUE,
   );
   export const TOKEN_SERVICE = BindingKey.create<TokenService>(
     'services.jwt.service',

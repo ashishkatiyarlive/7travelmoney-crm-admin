@@ -1,8 +1,11 @@
 export const enum PermissionKeys {
   // admin
-  CreateJob = 'CreateJob',
-  UpdateJob = 'UpdateJob',
-  DeleteJob = 'DeleteJob',
+  CreateUser = 'CreateUser',
+  UpdateUser = 'UpdateUser',
+  DeleteUser = 'DeleteUser',
+  CreateCurrency = 'CreateCurrency',
+  GetCurrency = 'GetCurrency',
+  Order = 'Order',
 
   // normal authenticated user
   AccessAuthFeature = 'AccessAuthFeature',

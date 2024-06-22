@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Filter,
   FilterExcludingWhere,
@@ -13,8 +14,10 @@ import {
   requestBody,
   response
 } from '@loopback/rest';
+import {PermissionKeys} from '../authorization/permission-keys';
 import {Currency} from '../models';
 import {CurrencyRepository} from '../repositories';
+
 
 export class CurrencyController {
   constructor(
@@ -22,6 +25,7 @@ export class CurrencyController {
     public currencyRepository: CurrencyRepository,
   ) { }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.CreateCurrency]}})
   @post('/currencies')
   @response(200, {
     description: 'Currency model instance',
@@ -43,6 +47,7 @@ export class CurrencyController {
     return this.currencyRepository.create(currency);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.GetCurrency]}})
   @get('/currencies')
   @response(200, {
     description: 'Array of Currency model instances',
@@ -61,6 +66,7 @@ export class CurrencyController {
     return this.currencyRepository.find(filter);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.GetCurrency]}})
   @get('/currencies/{id}')
   @response(200, {
     description: 'Currency model instance',
@@ -77,6 +83,7 @@ export class CurrencyController {
     return this.currencyRepository.findById(id, filter);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.CreateCurrency]}})
   @patch('/currencies/{id}')
   @response(204, {
     description: 'Currency PATCH success',
@@ -95,6 +102,7 @@ export class CurrencyController {
     await this.currencyRepository.updateById(id, currency);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.CreateCurrency]}})
   @put('/currencies/{id}')
   @response(204, {
     description: 'Currency PUT success',

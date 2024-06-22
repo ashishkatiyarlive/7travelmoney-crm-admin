@@ -29,9 +29,12 @@ export class AdminController {
   async createAdmin(@requestBody() admin: User) {
     validateCredentials(_.pick(admin, ['email', 'password']));
     admin.permissions = [
-      PermissionKeys.CreateJob,
-      PermissionKeys.UpdateJob,
-      PermissionKeys.DeleteJob,
+      PermissionKeys.CreateUser,
+      PermissionKeys.UpdateUser,
+      PermissionKeys.DeleteUser,
+      PermissionKeys.CreateCurrency,
+      PermissionKeys.GetCurrency,
+      PermissionKeys.Order,
     ];
 
     admin.password = await this.hasher.hashPassword(admin.password);

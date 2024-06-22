@@ -1,10 +1,11 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
   get,
@@ -16,6 +17,7 @@ import {
   requestBody,
   response
 } from '@loopback/rest';
+import {PermissionKeys} from '../authorization/permission-keys';
 import {Order} from '../models';
 import {OrderRepository} from '../repositories';
 
@@ -25,6 +27,7 @@ export class OrderController {
     public orderRepository: OrderRepository,
   ) { }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.Order]}})
   @post('/orders')
   @response(200, {
     description: 'Order model instance',
@@ -46,6 +49,7 @@ export class OrderController {
     return this.orderRepository.create(order);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.Order]}})
   @get('/orders/count')
   @response(200, {
     description: 'Order model count',
@@ -57,6 +61,7 @@ export class OrderController {
     return this.orderRepository.count(where);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.Order]}})
   @get('/orders')
   @response(200, {
     description: 'Array of Order model instances',
@@ -72,9 +77,27 @@ export class OrderController {
   async find(
     @param.filter(Order) filter?: Filter<Order>,
   ): Promise<Order[]> {
-    return this.orderRepository.find(filter);
+    return this.orderRepository.find(filter, {include: ['user', 'currencies']});
+    // {
+    //   "offset": 0,
+    //   "limit": 100,
+    //   "skip": 0,
+    //   "order": "id",
+    //   "where": {
+    //     "status": 1
+    //   },
+    //   "include": [
+    //     {
+    //       "relation": "user"
+    //     },
+    //  {
+    //       "relation": "currencies"
+    //     }
+    //   ]
+    // }
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.Order]}})
   @get('/orders/{id}')
   @response(200, {
     description: 'Order model instance',
@@ -88,9 +111,12 @@ export class OrderController {
     @param.path.number('id') id: number,
     @param.filter(Order, {exclude: 'where'}) filter?: FilterExcludingWhere<Order>
   ): Promise<Order> {
-    return this.orderRepository.findById(id, filter);
+    return this.orderRepository.findById(id, filter,
+      {include: ['user', 'currencies']}
+    );
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.Order]}})
   @patch('/orders/{id}')
   @response(204, {
     description: 'Order PATCH success',
@@ -109,6 +135,7 @@ export class OrderController {
     await this.orderRepository.updateById(id, order);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.Order]}})
   @put('/orders/{id}')
   @response(204, {
     description: 'Order PUT success',

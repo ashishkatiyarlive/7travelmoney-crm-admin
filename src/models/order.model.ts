@@ -1,4 +1,6 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {Currency} from './currency.model';
+import {User} from './user.model';
 
 @model({
   settings: {
@@ -15,18 +17,6 @@ export class Order extends Entity {
     generated: true,
   })
   id?: number;
-
-  @property({
-    type: 'number',
-    required: true,
-  })
-  user_id: number;
-
-  @property({
-    type: 'number',
-    required: true,
-  })
-  currency_id: number;
 
   @property({
     type: 'number',
@@ -70,6 +60,11 @@ export class Order extends Entity {
   })
   updated_at?: string;
 
+  @belongsTo(() => User, {name: 'user'})
+  user_id: number;
+
+  @belongsTo(() => Currency, {name: 'currencies'})
+  currency_id: number;
 
   constructor(data?: Partial<Order>) {
     super(data);

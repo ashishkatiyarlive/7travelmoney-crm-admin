@@ -1,5 +1,4 @@
-import {AuthenticationBindings} from '@loopback/authentication';
-import {TokenServiceBindings} from '@loopback/authentication-jwt';
+import {AuthenticationBindings, authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {
   Filter,
@@ -20,7 +19,7 @@ import {
 import {UserProfile} from '@loopback/security';
 import _ from 'lodash';
 import {PermissionKeys} from '../authorization/permission-keys';
-import {PasswordHasherBindings, UserServiceBindings} from '../keys';
+import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
 import {User} from '../models';
 import {Credentials, UserRepository} from '../repositories';
 import {validateCredentials} from '../services';
@@ -44,6 +43,7 @@ export class UserController {
     public hasher: BcryptHasher,
   ) { }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.UpdateUser]}})
   @get('/users')
   @response(200, {
     description: 'Array of User model instances',
@@ -62,6 +62,7 @@ export class UserController {
     return this.userRepository.find(filter);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.CreateCurrency]}})
   @get('/users/{id}')
   @response(200, {
     description: 'User model instance',
@@ -78,6 +79,7 @@ export class UserController {
     return this.userRepository.findById(id, filter);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.UpdateUser]}})
   @patch('/users/{id}')
   @response(204, {
     description: 'User PATCH success',
@@ -96,6 +98,7 @@ export class UserController {
     await this.userRepository.updateById(id, user);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.DeleteUser]}})
   @del('/users/{id}')
   @response(204, {
     description: 'User DELETE success',
@@ -104,6 +107,7 @@ export class UserController {
     await this.userRepository.deleteById(id);
   }
 
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.CreateUser]}})
   @post('/users/signup', {
     responses: {
       '200': {
@@ -118,7 +122,7 @@ export class UserController {
   async signup(@requestBody() userData: User) {
     validateCredentials(_.pick(userData, ['email', 'password']));
 
-    userData.permissions = [PermissionKeys.AccessAuthFeature];
+    userData.permissions = [PermissionKeys.AccessAuthFeature, PermissionKeys.Order, PermissionKeys.GetCurrency];
 
     userData.password = await this.hasher.hashPassword(userData.password);
     const savedUser = await this.userRepository.create(userData);
@@ -159,7 +163,7 @@ export class UserController {
     return Promise.resolve({token: token});
   }
 
-  // @authenticate('jwt', {required: [PermissionKeys.AccessAuthFeature]})
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.AccessAuthFeature]}})
   @get('/users/me', {
     security: OPERATION_SECURITY_SPEC,
     responses: {

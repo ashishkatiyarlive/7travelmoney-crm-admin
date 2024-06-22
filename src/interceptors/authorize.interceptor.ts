@@ -14,7 +14,7 @@ import {
 } from '@loopback/context';
 import {HttpErrors} from '@loopback/rest';
 import {intersection} from 'lodash';
-import {MyUserProfile, RequiredPermissions} from '../types';
+import {MyUserProfile} from '../types';
 
 /**
  * This class will be bound to the application as an `Interceptor` during
@@ -60,19 +60,15 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
       // if you not provide options in your @authenticate decorator
       if (!this.metadata) return next();
 
-      const requriedPermissions = this.metadata.options as RequiredPermissions;
-
-      // console.log(requriedPermissions);
+      const requriedPermissions: any = this.metadata;
       const user = await this.getCurrentUser();
-
-      //console.log('User Permissions:', user.permissions);
       const results = intersection(
         user.permissions,
-        requriedPermissions.required,
+        requriedPermissions[0].options?.required,
       ).length;
       if (
-        requriedPermissions.required !== undefined &&
-        results !== requriedPermissions.required.length
+        requriedPermissions[0].options?.required !== undefined &&
+        results !== requriedPermissions[0].options?.required.length
       ) {
         throw new HttpErrors.Forbidden('INVALID ACCESS');
       }

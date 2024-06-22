@@ -25,14 +25,18 @@ export class MyUserService implements UserService<User, Credentials> {
       },
     });
     if (!foundUser) {
-      throw new HttpErrors.NotFound('user not found');
+      throw new HttpErrors.NotFound('user not found.');
     }
+    console.log(foundUser);
     const passwordMatched = await this.hasher.comparePassword(
       credentials.password,
       foundUser.password,
     );
     if (!passwordMatched)
-      throw new HttpErrors.Unauthorized('password is not valid');
+      throw new HttpErrors.Unauthorized('password is not valid.');
+
+    if (foundUser.status === false)
+      throw new HttpErrors.Unauthorized('Your account is deactivated. Please contact to admin.');
     return foundUser;
   }
   convertToUserProfile(user: User): UserProfile {
