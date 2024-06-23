@@ -59,7 +59,9 @@ export class UserController {
   async find(
     @param.filter(User) filter?: Filter<User>,
   ): Promise<User[]> {
-    return this.userRepository.find(filter);
+    return this.userRepository.find({
+      "where": {'id': {'neq': 1}}
+    });
   }
 
   @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.CreateCurrency]}})
@@ -163,7 +165,7 @@ export class UserController {
     return Promise.resolve({token: token});
   }
 
-  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.AccessAuthFeature]}})
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.CreateCurrency]}})
   @get('/users/me', {
     security: OPERATION_SECURITY_SPEC,
     responses: {

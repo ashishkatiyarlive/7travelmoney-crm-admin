@@ -77,6 +77,20 @@ export class OrderController {
   async find(
     @param.filter(Order) filter?: Filter<Order>,
   ): Promise<Order[]> {
+    filter = {
+      "offset": 0,
+      "limit": 100,
+      "skip": 0,
+      "order": ["booking_date DESC"],
+      "include": [
+        {
+          "relation": "user"
+        },
+        {
+          "relation": "currencies"
+        }
+      ]
+    }
     return this.orderRepository.find(filter, {include: ['user', 'currencies']});
     // {
     //   "offset": 0,
