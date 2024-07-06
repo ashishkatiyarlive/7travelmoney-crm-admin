@@ -58,6 +58,24 @@ export class User extends Entity {
   })
   updated_at?: string;
 
+  @property({
+    type: 'string',
+    default: null,
+  })
+  city?: string;
+
+  @property({
+    type: 'string',
+    default: null,
+  })
+  state?: string;
+
+  @property({
+    type: 'string',
+    default: null,
+  })
+  address?: string;
+
   // @property({
   //   type: 'string',
   //   default: null,

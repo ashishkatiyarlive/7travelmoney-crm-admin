@@ -1,6 +1,5 @@
 import {authenticate} from '@loopback/authentication';
 import {
-  Filter,
   FilterExcludingWhere,
   repository
 } from '@loopback/repository';
@@ -61,9 +60,9 @@ export class CurrencyController {
     },
   })
   async find(
-    @param.filter(Currency) filter?: Filter<Currency>,
+    // @param.filter(Currency) filter?: Filter<Currency>,
   ): Promise<Currency[]> {
-    return this.currencyRepository.find(filter);
+    return this.currencyRepository.find({order: ['priority DESC']});
   }
 
   @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.GetCurrency]}})

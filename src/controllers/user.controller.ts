@@ -60,7 +60,8 @@ export class UserController {
     @param.filter(User) filter?: Filter<User>,
   ): Promise<User[]> {
     return this.userRepository.find({
-      "where": {'id': {'neq': 1}}
+      "where": {'id': {'neq': 1}},
+      order: ['id DESC'],
     });
   }
 
