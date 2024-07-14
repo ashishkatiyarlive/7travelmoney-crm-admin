@@ -13,6 +13,7 @@ import {
   param,
   patch,
   post,
+  put,
   requestBody,
   response
 } from '@loopback/rest';
@@ -82,7 +83,33 @@ export class UserController {
     return this.userRepository.findById(id, filter);
   }
 
-  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.UpdateUser]}})
+  @put('/users/{id}')
+  @response(204, {
+    description: 'User PUT success',
+  })
+  async replaceById(
+    @param.path.number('id') id: number,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(User, {
+            title: 'UpdateUser',
+            exclude: ['id', 'password', 'status', 'permissions', 'role', 'created_at'],
+          }),
+        },
+      },
+    })
+    user: User,
+  ): Promise<void> {
+    const data = this.userRepository.findById(id);
+    user.password = (await data).password;
+    user.status = (await data).status;
+    user.permissions = (await data).permissions;
+    user.created_at = (await data).created_at;
+    await this.userRepository.replaceById(id, user);
+  }
+
+  // @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.UpdateUser]}})
   @patch('/users/{id}')
   @response(204, {
     description: 'User PATCH success',
@@ -126,7 +153,7 @@ export class UserController {
     validateCredentials(_.pick(userData, ['email', 'password']));
 
     userData.permissions = [PermissionKeys.AccessAuthFeature, PermissionKeys.Order, PermissionKeys.GetCurrency];
-
+    userData.role = 'User';
     userData.password = await this.hasher.hashPassword(userData.password);
     const savedUser = await this.userRepository.create(userData);
     // delete savedUser.password;
@@ -163,10 +190,10 @@ export class UserController {
     // console.log(userProfile);
 
     const token = await this.jwtService.generateToken(userProfile);
-    return Promise.resolve({token: token});
+    return Promise.resolve({token: token, role: userProfile.role});
   }
 
-  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.CreateCurrency]}})
+  @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.GetCurrency]}})
   @get('/users/me', {
     security: OPERATION_SECURITY_SPEC,
     responses: {

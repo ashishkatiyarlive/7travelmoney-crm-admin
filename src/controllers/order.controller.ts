@@ -1,4 +1,5 @@
 import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -17,6 +18,7 @@ import {
   requestBody,
   response
 } from '@loopback/rest';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {PermissionKeys} from '../authorization/permission-keys';
 import {Order} from '../models';
 import {OrderRepository} from '../repositories';
@@ -25,6 +27,7 @@ export class OrderController {
   constructor(
     @repository(OrderRepository)
     public orderRepository: OrderRepository,
+    @inject(SecurityBindings.USER) private user: UserProfile
   ) { }
 
   @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.Order]}})
@@ -77,19 +80,39 @@ export class OrderController {
   async find(
     @param.filter(Order) filter?: Filter<Order>,
   ): Promise<Order[]> {
-    filter = {
-      "offset": 0,
-      "limit": 100,
-      "skip": 0,
-      "order": ["booking_date DESC"],
-      "include": [
-        {
-          "relation": "user"
+    if (this.user.role === 'Admin') {
+      filter = {
+        "offset": 0,
+        "limit": 100,
+        "skip": 0,
+        "order": ["booking_date DESC"],
+        "include": [
+          {
+            "relation": "user"
+          },
+          {
+            "relation": "currencies"
+          }
+        ]
+      }
+    } else {
+      filter = {
+        "offset": 0,
+        "limit": 100,
+        "skip": 0,
+        "order": ["booking_date DESC"],
+        "where": {
+          "user_id": this.user.id
         },
-        {
-          "relation": "currencies"
-        }
-      ]
+        "include": [
+          {
+            "relation": "user"
+          },
+          {
+            "relation": "currencies"
+          }
+        ]
+      }
     }
     return this.orderRepository.find(filter, {include: ['user', 'currencies']});
     // {

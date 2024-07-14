@@ -76,6 +76,12 @@ export class User extends Entity {
   })
   address?: string;
 
+  @property({
+    type: 'string',
+    default: 'User',
+  })
+  role?: string;
+
   // @property({
   //   type: 'string',
   //   default: null,

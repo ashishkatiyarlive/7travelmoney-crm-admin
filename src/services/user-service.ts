@@ -27,7 +27,7 @@ export class MyUserService implements UserService<User, Credentials> {
     if (!foundUser) {
       throw new HttpErrors.NotFound('user not found.');
     }
-    console.log(foundUser);
+
     const passwordMatched = await this.hasher.comparePassword(
       credentials.password,
       foundUser.password,
@@ -35,8 +35,9 @@ export class MyUserService implements UserService<User, Credentials> {
     if (!passwordMatched)
       throw new HttpErrors.Unauthorized('password is not valid.');
 
-    if (foundUser.status === false)
-      throw new HttpErrors.Unauthorized('Your account is deactivated. Please contact to admin.');
+    if (foundUser.status === false) {
+      throw new HttpErrors.Unauthorized('Your account is deactivated. Please contact to customer support.');
+    }
     return foundUser;
   }
   convertToUserProfile(user: User): UserProfile {
@@ -51,6 +52,7 @@ export class MyUserService implements UserService<User, Credentials> {
       [securityId]: user.id!.toString(),
       name: user.name,
       id: user.id,
+      role: user.role,
       email: user.email,
       permissions: user.permissions,
     };
