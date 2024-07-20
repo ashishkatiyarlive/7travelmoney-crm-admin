@@ -42,13 +42,14 @@ export class OrderController {
         'application/json': {
           schema: getModelSchemaRef(Order, {
             title: 'NewOrder',
-            exclude: ['id'],
+            exclude: ['id', 'user_id'],
           }),
         },
       },
     })
     order: Omit<Order, 'id'>,
   ): Promise<Order> {
+    order.user_id = this.user.id;
     return this.orderRepository.create(order);
   }
 
@@ -115,23 +116,6 @@ export class OrderController {
       }
     }
     return this.orderRepository.find(filter, {include: ['user', 'currencies']});
-    // {
-    //   "offset": 0,
-    //   "limit": 100,
-    //   "skip": 0,
-    //   "order": "id",
-    //   "where": {
-    //     "status": 1
-    //   },
-    //   "include": [
-    //     {
-    //       "relation": "user"
-    //     },
-    //  {
-    //       "relation": "currencies"
-    //     }
-    //   ]
-    // }
   }
 
   @authenticate({strategy: 'jwt', options: {required: [PermissionKeys.Order]}})
